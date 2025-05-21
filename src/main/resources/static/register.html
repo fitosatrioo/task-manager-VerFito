@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Task Manager</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .register-container {
+            max-width: 400px;
+            margin: 80px auto;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 40px 40px 40px;
+        }
+        h2 {
+            text-align: center;
+            color: #3730a3;
+            margin-bottom: 32px;
+        }
+        form > div {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 6px;
+            color: #6366f1;
+            font-weight: 500;
+        }
+        input {
+            padding: 8px 10px;
+            border: 1px solid #c7d2fe;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #f1f5f9;
+        }
+        button {
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            width: 100%;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #3730a3;
+        }
+        .error {
+            color: #dc2626;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .success {
+            color: #16a34a;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .link {
+            text-align: center;
+            margin-top: 16px;
+        }
+        .link a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="register-container">
+    <h2>Register</h2>
+    <form id="registerForm">
+        <div>
+            <label for="regUserName">Username</label>
+            <input type="text" id="regUserName" required autocomplete="username">
+        </div>
+        <div>
+            <label for="regEmail">Email</label>
+            <input type="email" id="regEmail" required>
+        </div>
+        <div>
+            <label for="regPassword">Password</label>
+            <input type="password" id="regPassword" required autocomplete="new-password">
+        </div>
+        <button type="submit">Register</button>
+        <div id="registerMsg" class="error" style="display:none;"></div>
+        <div id="registerSuccess" class="success" style="display:none;"></div>
+    </form>
+    <div class="link">Already have an account? <a href="/login.html">Login</a></div>
+</div>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.getElementById('registerMsg').style.display = 'none';
+        document.getElementById('registerSuccess').style.display = 'none';
+        const userName = document.getElementById('regUserName').value;
+        const userEmail = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        fetch('/user/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userName, userEmail, password })
+        })
+        .then(res => res.json())
+        .then(user => {
+            if (user && user.userId) {
+                document.getElementById('registerSuccess').innerText = 'Registration successful! Please login.';
+                document.getElementById('registerSuccess').style.display = 'block';
+                this.reset();
+            } else {
+                document.getElementById('registerMsg').innerText = 'Registration failed!';
+                document.getElementById('registerMsg').style.display = 'block';
+            }
+        })
+        .catch(() => {
+            document.getElementById('registerMsg').innerText = 'Registration failed!';
+            document.getElementById('registerMsg').style.display = 'block';
+        });
+    });
+</script>
+</body>
+</html>
